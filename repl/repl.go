@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 
+	"Primate/eval"
 	"Primate/lexer"
 	"Primate/parser"
 )
@@ -18,18 +19,18 @@ const PROMPT = ">> "
 // ComputerFace is the REPL's face of shock and horror when you encounter a
 // parser error :D
 const ComputerFace = `
-   _______________  
-  |  ___________  | 
-  | |           | | 
-  | |   0   0   | | 
-  | |     -     | | 
-  | |   \___/   | | 
-  | |___     ___| | 
-  |_____|\_/|_____| 
-    _|__|/ \|_|_
-   / ********** \   
- /  ************  \ 
---------------------
+   _________________  
+  |  _____________  | 
+  | |             | | 
+  | |    0   0    | | 
+  | |      -      | | 
+  | |    \___/    | | 
+  | |____     ____| | 
+  |______|\_/|______| 
+     _|__|/ \|_|_
+    / ********** \   
+  /  ************  \ 
+ --------------------
 `
 
 // Start starts the REPL in a continious loop
@@ -53,8 +54,11 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+		obj := eval.Eval(program)
+		if obj != nil {
+			io.WriteString(out, obj.Inspect())
+			io.WriteString(out, "\n")
+		}
 	}
 }
 
